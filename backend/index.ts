@@ -59,6 +59,19 @@ createConnection()
       return res.send(results);
     });
 
+    app.delete("/books/:id", async (req: Request, res: Response) => {
+      const bookRepository = connection.getRepository(Book);
+      const bookId = req.params.id;
+      const book = await bookRepository.findOne({ where: { id: bookId } });
+
+      if (!book) {
+        return res.status(404).send("Book not found");
+      }
+
+      const results = await bookRepository.delete(bookId);
+      return res.send(results);
+    });
+
     app.listen(3001, () => {
       console.log("Server is running on port 3001");
     });
