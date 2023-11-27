@@ -35,6 +35,13 @@ export default function FormDialog(props: Props) {
   };
 
   const handleClose = () => {
+    setFormData({
+      title: "",
+      description: "",
+      author: "",
+      publicationYear: "",
+      ISBN: "",
+    });
     onClose();
   };
 
@@ -60,16 +67,18 @@ export default function FormDialog(props: Props) {
   return (
     <React.Fragment>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{mode === "create" ? "Create" : "Edit"} Book</DialogTitle>
+        <DialogTitle>
+          {mode === "create" ? "Crear" : "Editar"} Libro
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To {mode === "create" ? "create" : "edit"} a book, please enter the
-            details here.
+            Para {mode === "create" ? "crear" : "editar"} un libro, ingrese los
+            datos a continuación
           </DialogContentText>
           <TextField
             margin="dense"
             id="title"
-            label="Title"
+            label="Titulo"
             type="text"
             fullWidth
             variant="standard"
@@ -79,7 +88,7 @@ export default function FormDialog(props: Props) {
           <TextField
             margin="dense"
             id="description"
-            label="Description"
+            label="Descripción"
             type="text"
             fullWidth
             variant="standard"
@@ -89,7 +98,7 @@ export default function FormDialog(props: Props) {
           <TextField
             margin="dense"
             id="author"
-            label="Author"
+            label="Autor"
             type="text"
             fullWidth
             variant="standard"
@@ -99,7 +108,7 @@ export default function FormDialog(props: Props) {
           <TextField
             margin="dense"
             id="publicationYear"
-            label="Publication Year"
+            label="Año de publicación"
             type="number"
             fullWidth
             variant="standard"
@@ -118,9 +127,9 @@ export default function FormDialog(props: Props) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleAction}>
-            {mode === "create" ? "Create" : "Save Changes"}
+            {mode === "create" ? "Crear" : "Guardar cambios"}
           </Button>
         </DialogActions>
       </Dialog>

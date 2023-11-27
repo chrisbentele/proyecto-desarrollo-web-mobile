@@ -87,13 +87,13 @@ export const headCells: readonly HeadCell[] = [
     id: "publicationYear",
     numeric: true,
     disablePadding: false,
-    label: "Año de publicacion",
+    label: "Año de publicación",
   },
   {
     id: "description",
     numeric: true,
     disablePadding: false,
-    label: "Descripcion",
+    label: "Descripción",
   },
   {
     id: "ISBN",

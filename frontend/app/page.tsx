@@ -205,6 +205,7 @@ function Main() {
             count={rows.length}
             rowsPerPage={rowsPerPage}
             page={page}
+            labelRowsPerPage={"Filas por página"}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
