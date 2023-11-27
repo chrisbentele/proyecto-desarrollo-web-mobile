@@ -18,8 +18,9 @@ import {
   getComparator,
   stableSort,
 } from "@/lib/utils";
-import { onCreate, onEdit, onSearch } from "@/lib/db.api";
+import { onCreate, onEdit, onGenerarPdf, onSearch } from "@/lib/db.api";
 import FormDialog from "@/components/FormDialog";
+import { on } from "events";
 
 function Main() {
   const [order, setOrder] = useState<Order>("asc");
@@ -177,6 +178,23 @@ function Main() {
           />
         </Paper>
       </Box>
+
+      <Button
+        onClick={() => {
+          onGenerarPdf()
+            .then((data) => {
+              console.log(data);
+              const blob = new Blob([data], { type: "application/pdf" });
+              const url = window.URL.createObjectURL(blob);
+              window.open(url);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }}
+      >
+        {"Generar PDF"} 
+      </Button>
 
       <Button onClick={() => setOpenCreateItemDialog(true)}>
         {"Nuevo Libro"}
