@@ -9,6 +9,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 import {
   Data,
   EnhancedTableHead,
@@ -17,7 +18,8 @@ import {
   getComparator,
   stableSort,
 } from "@/lib/utils";
-import { onSearch } from "@/lib/db.api";
+import { onCreate, onEdit, onSearch } from "@/lib/db.api";
+import FormDialog from "@/components/FormDialog";
 
 function Main() {
   const [order, setOrder] = useState<Order>("asc");
@@ -29,9 +31,13 @@ function Main() {
   const [rows, setRows] = useState<Data[]>([]);
 
   useEffect(() => {
-    onSearch().then((data) => {
-      setRows(data);
-    });
+    onSearch()
+      .then((data) => {
+        setRows(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleRequestSort = (
@@ -52,23 +58,13 @@ function Main() {
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: string[] = [];
+  const [openItemDialog, setOpenItemDialog] = React.useState(false);
+  const [openCreateItemDialog, setOpenCreateItemDialog] = React.useState(false);
+  const [focusedItem, setFocusedItem] = React.useState<Data | null>(null);
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
+  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
+    setOpenItemDialog(true);
+    setFocusedItem(rows.find((item) => item.id === id) || null);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -181,6 +177,35 @@ function Main() {
           />
         </Paper>
       </Box>
+
+      <Button onClick={() => setOpenCreateItemDialog(true)}>
+        {"Nuevo Libro"}
+      </Button>
+
+      <FormDialog
+        mode={"edit"}
+        open={openItemDialog}
+        onClose={() => {
+          setOpenItemDialog(false);
+          setFocusedItem(null);
+        }}
+        onOpen={() => setOpenItemDialog(!openItemDialog)}
+        initialData={focusedItem}
+        onAction={() => {
+          onEdit(focusedItem);
+        }}
+      />
+      <FormDialog
+        mode={"create"}
+        open={openCreateItemDialog}
+        onClose={() => {
+          setOpenCreateItemDialog(false);
+        }}
+        onOpen={() => setOpenItemDialog(!openCreateItemDialog)}
+        onAction={(data: any) => {
+          onCreate(data);
+        }}
+      />
     </main>
   );
 }
