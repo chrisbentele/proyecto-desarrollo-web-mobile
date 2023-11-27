@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { createConnection } from "typeorm";
 import { Book } from "./entity/Book.js";
 import cors from "cors";
+import fs from "fs";
+import PDFDocument from "pdfkit";
 
 dotenv.config();
 
@@ -70,6 +72,40 @@ createConnection()
 
       const results = await bookRepository.delete(bookId);
       return res.send(results);
+    });
+
+    app.get("/generate-pdf", async (req, res) => {
+      const books = await connection.getRepository(Book).find();
+
+      if (!books) {
+        return res.status(404).send("Books not found");
+      }
+
+      // Set the content type for the response
+      res.setHeader("Content-Type", "application/pdf");
+      // Set the content-disposition header to make the browser open the file download dialog
+      res.setHeader("Content-Disposition", "attachment; filename=books.pdf");
+
+      const doc = new PDFDocument();
+      doc.pipe(res);
+
+      doc.fontSize(14).text("Biblioteca", { align: "center" }).moveDown();
+
+      books.forEach((book, index) => {
+        doc
+          .fontSize(12)
+          .text(
+            `${index + 1}. Titulo: ${book.title}\n   Descripcion: ${
+              book.description
+            }\n   Autor: ${book.author}\n   Año: ${
+              book.publicationYear
+            }\n   ISBN: ${book.ISBN}\n`
+          )
+          .moveDown();
+      });
+
+      // Finalize the PDF and end the response
+      doc.end();
     });
 
     app.listen(3001, () => {
