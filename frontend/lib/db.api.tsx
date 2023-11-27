@@ -58,7 +58,7 @@ export const onSearch = () => {
 export const onGenerarPdf = () => {
   console.log("onGenerarPdf");
   return fetch("http://127.0.0.1:3001/generate-pdf")
-    .then((res) => res.json())
+    .then((res) => res.blob())
     .then((data) => {
       console.log(data);
       return data;
