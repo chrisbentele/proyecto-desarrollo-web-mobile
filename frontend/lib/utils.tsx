@@ -15,7 +15,6 @@ import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
-import { onDelete } from "./db.api";
 export interface Data {
   id: string;
   title: string;
@@ -172,10 +171,12 @@ export function EnhancedTableHead(props: EnhancedTableProps) {
 
 export interface EnhancedTableToolbarProps {
   selected: any[];
+  onCreate: () => void;
+  onDelete: () => void;
 }
 
 export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { selected } = props;
+  const { selected, onCreate, onDelete } = props;
 
   const numSelected = selected.length;
   return (
@@ -214,13 +215,13 @@ export function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton onClick={() => onDelete(selected)}>
+          <IconButton onClick={onDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
       ) : (
         <Tooltip title="Crear">
-          <IconButton onClick={() => onDelete(selected)}>
+          <IconButton onClick={onCreate}>
             <AddBoxIcon />
           </IconButton>
         </Tooltip>

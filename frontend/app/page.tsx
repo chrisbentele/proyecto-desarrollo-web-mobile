@@ -18,7 +18,7 @@ import {
   getComparator,
   stableSort,
 } from "@/lib/utils";
-import { onCreate, onEdit, onSearch } from "@/lib/db.api";
+import { onCreate, onDelete, onEdit, onSearch } from "@/lib/db.api";
 import FormDialog from "@/components/FormDialog";
 
 function Main() {
@@ -30,14 +30,20 @@ function Main() {
 
   const [rows, setRows] = useState<Data[]>([]);
 
-  useEffect(() => {
+  const reloadRows = () => {
     onSearch()
       .then((data) => {
         setRows(data);
+        setSelected([]);
+        setPage(0);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("err");
       });
+  };
+
+  useEffect(() => {
+    reloadRows();
   }, []);
 
   const handleRequestSort = (
@@ -97,7 +103,16 @@ function Main() {
     <main className="p-4">
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
-          <EnhancedTableToolbar selected={selected} />
+          <EnhancedTableToolbar
+            selected={selected}
+            onCreate={() => setOpenCreateItemDialog(true)}
+            onDelete={() => {
+              console.log("delete");
+              onDelete(selected).then(() => {
+                reloadRows();
+              });
+            }}
+          />
           <TableContainer>
             <Table
               sx={{ minWidth: 750 }}
@@ -134,6 +149,17 @@ function Main() {
                           checked={isItemSelected}
                           inputProps={{
                             "aria-labelledby": labelId,
+                          }}
+                          onClick={(event) => {
+                            console.log("click");
+                            event.stopPropagation();
+                            if (isItemSelected) {
+                              setSelected(
+                                selected.filter((item) => item !== row.id)
+                              );
+                            } else {
+                              setSelected([...selected, row.id]);
+                            }
                           }}
                         />
                       </TableCell>
@@ -178,10 +204,6 @@ function Main() {
         </Paper>
       </Box>
 
-      <Button onClick={() => setOpenCreateItemDialog(true)}>
-        {"Nuevo Libro"}
-      </Button>
-
       <FormDialog
         mode={"edit"}
         open={openItemDialog}
@@ -191,8 +213,10 @@ function Main() {
         }}
         onOpen={() => setOpenItemDialog(!openItemDialog)}
         initialData={focusedItem}
-        onAction={() => {
-          onEdit(focusedItem);
+        onAction={(data) => {
+          onEdit(data).then(() => {
+            reloadRows();
+          });
         }}
       />
       <FormDialog
@@ -203,7 +227,9 @@ function Main() {
         }}
         onOpen={() => setOpenItemDialog(!openCreateItemDialog)}
         onAction={(data: any) => {
-          onCreate(data);
+          onCreate(data).then(() => {
+            reloadRows();
+          });
         }}
       />
     </main>
