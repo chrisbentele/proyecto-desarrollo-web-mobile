@@ -97,16 +97,16 @@ const headCells: readonly HeadCell[] = [
     label: "Año de publicacion",
   },
   {
-    id: "ISBN",
-    numeric: true,
-    disablePadding: false,
-    label: "ISBN",
-  },
-  {
     id: "description",
     numeric: true,
     disablePadding: false,
     label: "Descripcion",
+  },
+  {
+    id: "ISBN",
+    numeric: true,
+    disablePadding: false,
+    label: "ISBN",
   },
 ];
 
@@ -176,13 +176,18 @@ function EnhancedTableHead(props: EnhancedTableProps) {
   );
 }
 
+const onDelete = (selected) => {
+  throw new Error("Not implemented");
+};
+
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selected: any[];
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
+  const { selected } = props;
 
+  const numSelected = selected.length;
   return (
     <Toolbar
       sx={{
@@ -218,7 +223,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       )}
       {numSelected > 0 ? (
         <Tooltip title="Delete">
-          <IconButton>
+          <IconButton onClick={onDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -310,7 +315,7 @@ function Main() {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage
       ),
-    [order, orderBy, page, rowsPerPage]
+    [order, orderBy, page, rowsPerPage, rows]
   );
 
   return (
@@ -369,8 +374,8 @@ function Main() {
                       </TableCell>
                       <TableCell align="right">{row.author}</TableCell>
                       <TableCell align="right">{row.publicationYear}</TableCell>
-                      <TableCell align="right">{row.ISBN}</TableCell>
                       <TableCell align="right">{row.description}</TableCell>
+                      <TableCell align="right">{row.ISBN}</TableCell>
                     </TableRow>
                   );
                 })}
