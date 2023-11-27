@@ -19,6 +19,10 @@ export const onSearch = () => {
     });
 };
 
+export const onGenerarPdf = () => {
+  console.log("onGenerarPdf");
+};
+
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   onDelete,
